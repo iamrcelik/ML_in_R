@@ -1,0 +1,72 @@
+x = c(1,2,3,4,5,6)
+x
+x = (1,2,3,4,5,6)
+x = c(1,2,3,4,5,6)
+x
+x = c(1,2,3,4,5,6)
+x
+//asdas
+x = c(1,2,3,4,5,6)
+x
+x = c(12,3,4)
+x
+clear
+getwd()
+x <- c(0.4,0.5)
+x
+x <- (true,false)
+x <- (TRUE,FALSE)
+x <- c(TRUE,FALSE)
+x
+x <- vector("numeric", lenght = 10)
+x <- vector("numeric", length = 10)
+x
+x =4
+x
+x <- 4
+x
+x <- c(length = 10)
+x
+x <- c("numeric", lenght = 10)
+x
+x <- 0:6
+x
+x <- c(0:6)
+x
+class(x)
+as.numeric(x)
+as.logical(x)
+as.character(x)
+x <- list(1,"a",TRUE, 1+4i)
+x
+m <- matrix(nrow=2, ncol=3)
+m
+dim(m)
+attributes(m)
+m <- 1:10
+m
+dim(m)
+dim(m) <- c(2,5)
+m
+x <- 1:3
+y <- 10:12
+cbind(x,y)
+rbind(x,y)
+x <- factor(c("yes","yes","no","yes","no"))
+x
+table(x)
+unclass(x)
+x <- c(1,2,NA,10,3)
+is.na(x)
+is.nan(x)
+x <- data.frame(foo = 1:4 , bar = c(T,T,F,F))
+x
+nrow(x)
+ncol(x)
+x <- 1:3
+x
+names(x)
+names(x) <- c("foo", "bar", "norf")
+names(x)
+x <- list(a=1, b=2, c=3)
+x
