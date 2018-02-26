@@ -11,62 +11,99 @@ x
 x = c(12,3,4)
 x
 clear
-getwd()
-x <- c(0.4,0.5)
+dput
+dump
+clear
+y <- data.frame(a=1, b="a")
+y
+dput(y)
+dput(y, file="y.R")
+new.y <- dget("y.R")
+new.y
+str(file)
+x <- list("foo"=1:4, "bar"=0.6)
 x
-x <- (true,false)
-x <- (TRUE,FALSE)
-x <- c(TRUE,FALSE)
+x[[1]]
+x[1]
+x[[[1]]]
+x["bar"]
+x[[2]]
+x[2]
+x <- list(foo=1:4, bar=0.6)
 x
-x <- vector("numeric", lenght = 10)
-x <- vector("numeric", length = 10)
+c(1,3)
+x[c(1,3)]
+x <- list(foo = 4:6 , bar= 0.6)
 x
-x =4
+x[[1]]
+x$foo
+x$bar
+name <- foo
+name <- "foo"
+name
+x[[name]]
+x$foo
+x$name
+x <- matrix(1:6, 2, 3)
 x
-x <- 4
+x [1, ,drop=FALSE]
+airquality[1:6, ]
+good <- complete.cases(airquality)
+good
+airquality[good,][1:6,]
+airquality[1:6, 2:5]
+airquality[1:6, 10,10]
+airquality[1:6, 2,3]
+airquality[1:8, ]
+good <- complete.cases(airquality)
+good
+y <- matrix(rep(1,10),2,2)
+y
+y <- matrix(rep(1,10),5,5)
+y
+y <- matrix(rep(10,4),2,2)
+y
+y <- matrix(rep(10,4),5,5)
+x <- c(4, "a", TRUE)
 x
-x <- c(length = 10)
-x
-x <- c("numeric", lenght = 10)
-x
-x <- 0:6
-x
-x <- c(0:6)
-x
+type(c)
+type(x)
+type.x
+x.type
+x.type()
 class(x)
-as.numeric(x)
-as.logical(x)
-as.character(x)
-x <- list(1,"a",TRUE, 1+4i)
+x <- readcsv("hw1_data.csv")
+x <- read.csv("hw1_data.csv")
+getwd()
+read.csv("hw1_data.csv")
+read.csv("hw1_data")
+con <- file("hw1_data", "r")
+x <- read.csv('hw1_data')
+for(i in 1:10){}
+print(i)
+for(i in 1:10){print(i)}
+x <- c("a","b","c","d")
+for (i in 1:4){print(x[i])}
+for (i in x){print(x[i])}
+for (i in x){print(x)}
+for (i in x){print(x(i))}
+for (i in x){print(x[i])}
+for (i in seq_along(x)){}
+for (i in seq_along(x)){print(x[i])}
+for(letter in x){print(letter)}
+for (i in x){print(i)}
+x <- matrix(1:6, 2, 3)
 x
-m <- matrix(nrow=2, ncol=3)
-m
-dim(m)
-attributes(m)
-m <- 1:10
-m
-dim(m)
-dim(m) <- c(2,5)
-m
-x <- 1:3
-y <- 10:12
-cbind(x,y)
-rbind(x,y)
-x <- factor(c("yes","yes","no","yes","no"))
-x
-table(x)
-unclass(x)
-x <- c(1,2,NA,10,3)
-is.na(x)
-is.nan(x)
-x <- data.frame(foo = 1:4 , bar = c(T,T,F,F))
-x
-nrow(x)
-ncol(x)
-x <- 1:3
-x
-names(x)
-names(x) <- c("foo", "bar", "norf")
-names(x)
-x <- list(a=1, b=2, c=3)
-x
+for (i in seq_len(nrow(x)))
+for (j in seq_len(ncol(x)))
+print(x[i,j])
+for (i in seq_len(nrow(x))){for(j in seq_len(ncol(x))){print(x[i,j])}}
+seq_len(ncol(x))
+seq_len(nrow(x))
+seq_along(nrow(x))
+seq_along(ncol(x))
+seq_along(x)
+coin <- rbinom (1,1,0.5)
+coin
+coin <- rbinom (1)
+x1 <- computeEstimate()
