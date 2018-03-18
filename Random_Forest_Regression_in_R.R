@@ -18,7 +18,7 @@ dataset = dataset[ , 2:3]
 #training_set[,2:3] = scale(training_set[:2,3])
 #test_set[,2:3] = scale(test_set[:2,3])
 
-#Fitting the Decision Tree Regression model to fit dataset
+#Fitting the Random Forest Regression model to fit dataset
 install.packages('randomForest')
 library('randomForest')
 
