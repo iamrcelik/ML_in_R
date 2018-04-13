@@ -38,11 +38,12 @@ ui <- fluidPage(
 
                 mainPanel(
                         dataTableOutput("table"),
-                        plotOutput("plot")
+                        plotOutput("plot"),
                 )
         ) )
 
 server <- function(input, output) {
+
         output$plot<-renderPlot({ 
                 if(input$pType=='c')
                 {
@@ -103,7 +104,7 @@ server <- function(input, output) {
                         colnames(x2) <- c("Review","Liked")
                         dataset_original = read.delim('/Users/mertcelik/Desktop/Restaurant_Reviews.tsv', quote = '', stringsAsFactors = FALSE)
                         x3 <- rbind(dataset_original,x2)
-                    
+                        #tail(x3)
                         
                         corpus = VCorpus(VectorSource(x3$Review))
                         corpus = tm_map(corpus, content_transformer(tolower))  # corpus dakileri lowercase yapıyor.
@@ -124,7 +125,7 @@ server <- function(input, output) {
                         dataset$Liked = x3$Liked
                         
                         dataset$Liked = factor(dataset$Liked, levels = c(0, 1))
-                        
+                        library(caTools)
                         split = sample.split(dataset$Liked, SplitRatio = 0.9)
                         training_set = subset(dataset, split == TRUE)
                         test_set = subset(dataset, split == FALSE)
@@ -139,18 +140,25 @@ server <- function(input, output) {
                         matrix <- data.frame(cm)
                         matrix1 <- data.matrix(matrix)
                         
+                        h <- data.frame(y_pred)
+                        h$y_pred[110:150]
+                        a <- (h$y_pred[110:150] == 1)
+                        b <- (h$y_pred[110:150] == 0)
+                                
                         
-                        slice <- c(matrix1[1,3] + matrix1[4,3], matrix1[2,3] + matrix1[3,3])
-                        labels <- c("Correct Predict","Wrong Predict")
+                        slice <- c(sum(a == "TRUE"), sum(b == "TRUE"))
+                        labels <- c("Positive Sentences","Negative Sentences")
                         library(plotrix)
                         piepercent<- round(100*slice/sum(slice), 1)
                         lbls <- paste(labels,piepercent)
                         lbls <- paste(lbls, "%", seq="")
                         pie3D(slice, labels = lbls, col= rainbow(length(labels)), main="Sentiment Analysis with Suppor Vector Machine (SVM)")
+                
                         
                 }
         }
         )
+
 }
 
 shinyApp(ui, server)

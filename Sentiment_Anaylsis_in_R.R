@@ -69,7 +69,7 @@ matrix1 <- data.matrix(matrix)
 
 slice <- c(matrix1[1,3] + matrix1[4,3], matrix1[2,3] + matrix1[3,3])
 labels <- c("Correct Predict","Wrong Predict")
-#install.packages('plotrix')
+install.packages('plotrix')
 library(plotrix)
 piepercent<- round(100*slice/sum(slice), 1)
 lbls <- paste(labels,piepercent)
