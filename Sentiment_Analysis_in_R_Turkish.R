@@ -37,7 +37,7 @@ dataset$Liked = factor(dataset$Liked, levels = c(0, 1))
 # install.packages('caTools')
 library(caTools)
 set.seed(123)
-split = sample.split(dataset$Liked, SplitRatio = 0.6)
+split = sample.split(dataset$Liked, SplitRatio = 0.9)
 training_set = subset(dataset, split == TRUE)
 test_set = subset(dataset, split == FALSE)
 
@@ -45,14 +45,32 @@ test_set = subset(dataset, split == FALSE)
 # install.packages('randomForest')
 library(randomForest)
 
-classifier = randomForest(x = training_set[-74], y = training_set$Liked, ntree = 110)
+classifier = randomForest(x = training_set[-ncol(training_set)], y = training_set$Liked, ntree = 110)
+
+library(e1071)
+classifier = svm(formula = training_set$Liked ~., data = training_set[-ncol(training_set)], type = 'C-classification', kernel = 'linear')
+
+classifier = naiveBayes( x = training_set[-ncol(training_set)], y = training_set$Liked )
 
 
 # Predicting the Test set results
-y_pred = predict(classifier, newdata = test_set[-74])
+y_pred = predict(classifier, newdata = test_set[-ncol(test_set)])
+
+
 
 # Making the Confusion Matrix
-cm = table(test_set[, 73], y_pred)
+cm = table(test_set[, ncol(test_set)], y_pred)
+matrix <- data.frame(cm)
+matrix1 <- data.matrix(matrix)
+
+slice <- c(matrix1[1,3] + matrix1[4,3], matrix1[2,3] + matrix1[3,3])
+labels <- c("Correct Predict","Wrong Predict")
+#install.packages('plotrix')
+library(plotrix)
+piepercent<- round(100*slice/sum(slice), 1)
+lbls <- paste(labels,piepercent)
+lbls <- paste(lbls, "%", seq="")
+pie3D(slice, labels = lbls, col= rainbow(length(labels)), main="Sentiment Analysis with Suppor Vector Machine (SVM)")
 
 # 149 51 ----> %74,5 doğruluk oranı random forest (n=10)
 # 101 99 ----> %50,5 doğruluk oranı naive bayes

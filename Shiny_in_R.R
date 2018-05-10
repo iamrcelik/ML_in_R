@@ -16,11 +16,14 @@ setup_twitter_oauth(consumer_key = "yz47uxCURPWd6fkG7PFGp87zT",
 
 #Twitter üzerinden 5 adet tweet çekildi.
 hashtag <- searchTwitter("#facebook", n=50, lang="en")
+hashtag[2]
 
 #çekilen tweetlerin özelliklerinden oluşan bir tablo yaratıldı.
 x <- twListToDF(hashtag)
 
+
 #Shiny paketinin eklenerek bir uygulama gerçeklenmesi
+
 library(shiny)
 
 ui <- fluidPage(
@@ -31,26 +34,32 @@ ui <- fluidPage(
                         textInput("term","Enter Search Term:","#example"),
                         sliderInput("i", "Select no. of Tweets:", 0, 1500, 100, step = 50, round = FALSE, format = NULL, locale = NULL, ticks = TRUE, animate = FALSE, width = NULL, sep = ",", pre = NULL, post = NULL, timeFormat = NULL, timezone = NULL, dragRange = TRUE),
                         radioButtons("pType", "Select a Plot type:",
-                                     list("Sentiment Trends"='a', "Sentiment Scores"='b', "Word Cloud"='c')),
+                                     list("Sentiment Scores"='a', "Word Cloud"='b')),
+                        radioButtons("lType", "Select language:",
+                                     list("Turkish"='tr', "English"='en')),
                         submitButton("Analyze!"),
                         print(h6("  Be Patient, Good Things Take Time!"))
                         ),
 
                 mainPanel(
                         dataTableOutput("table"),
-                        plotOutput("plot"),
+                        plotOutput("plot")
+                        #textOutput("selected_var"),
+
+                
                 )
         ) )
 
 server <- function(input, output) {
 
         output$plot<-renderPlot({ 
-                if(input$pType=='c')
-                {
+                if(input$pType=='b')
+                {    
+                        if(input$lType == 'en'){
                         searchterm<-input$term
                         num<-input$i
                         
-                        list <- searchTwitter(searchterm, n= num, lang="en", since=NULL, until=NULL, retryOnRateLimit=10)
+                        list <- searchTwitter(searchterm, n= num, lang='en', since=NULL, until=NULL, retryOnRateLimit=10)
                         x <- twListToDF(list)
                         library(tm)
                         library(SnowballC) # stopWord() fonksiyonu için
@@ -66,10 +75,6 @@ server <- function(input, output) {
                         l <- gsub("(f|ht)(tp)(s?)(://)(\\S*)", "", l)
                         l <- gsub("[^0-9A-Za-z///' ]", "", l)
                         
-                        
-                        
-                        
-                        
                         #create corpus
                         lc <- Corpus(VectorSource(l))
                         
@@ -83,14 +88,46 @@ server <- function(input, output) {
                         library(RColorBrewer)
                         library(wordcloud)
                         pal2 <- brewer.pal(8,"Dark2")
-                        wordcloud(lc,min.freq=num/200,max.words=500, random.order=T, colors=pal2)      
+                        wordcloud(lc,min.freq=num/200,max.words=500, random.order=T, colors=pal2)     
+                        }
+                        
+                        if(input$lType == 'tr'){
+                                
+                                url <- "http://localhost:8090/"
+                                search <- input$term
+                                
+                                urltr <- paste(url,"tweets?q=",search,sep = "")
+                                x <- httr::GET(url = urltr, content_type("application/json"))
+                                c <- httr::content(x, "text")
+                                d <- fromJSON(c)
+                                dq <- as.data.frame(d)
+
+                                #create corpus
+                                corpus = VCorpus(VectorSource(dq$d))
+                                corpus = tm_map(corpus, content_transformer(tolower))  # corpus dakileri lowercase yapıyor.
+                                # as.character(corpus[[1]])
+                                corpus = tm_map(corpus, removeNumbers) # corpus daki numaraları kaldırıyor
+                                # as.character(corpus[[84]])
+                                corpus = tm_map(corpus, stripWhitespace) # corpustaki düzeltmeler nedeniyle oluşan extra spaceleri kaldırıyoruz.
+                                 
+                                
+                                library(RColorBrewer)
+                                library(wordcloud)
+                                pal2 <- brewer.pal(8,"Dark2")
+                                wordcloud(corpus,min.freq=10/200,max.words=500, random.order=T, colors=pal2)     
+                                
+                        }
                 }
-                if(input$pType=='b'){
+                        
+                if(input$pType=='a'){
                         
                         searchterm<-input$term
                         num<-input$i
                         list <- searchTwitter(searchterm, n= num, lang="en", since=NULL, until=NULL, retryOnRateLimit=10)
                         x <- twListToDF(list)
+                        #output$selected_var <- renderText({ 
+                        #       x$text[2]
+                        # })
                         x$text <- gsub("(f|ht)(tp)(s?)(://)(\\S*)", "", x$text)
                         x$text <- gsub("[^0-9A-Za-z///' ]", "", x$text)
                         library(tm)
@@ -108,15 +145,15 @@ server <- function(input, output) {
                         
                         corpus = VCorpus(VectorSource(x3$Review))
                         corpus = tm_map(corpus, content_transformer(tolower))  # corpus dakileri lowercase yapıyor.
-                        # as.character(corpus[[1]])
+                        # as.character(corpus[[1001]])
                         corpus = tm_map(corpus, removeNumbers) # corpus daki numaraları kaldırıyor
-                        # as.character(corpus[[2]])
+                        # as.character(corpus[[1001]])
                         corpus = tm_map(corpus, removePunctuation) # corpus daki noktalamaları kaldırıyor..
-                        # as.character(corpus[[1]])
+                        # as.character(corpus[[1001]])
                         corpus = tm_map(corpus, removeWords, stopwords()) # corpus daki alakasız kelimeleri stopword() ile bulup kaldırıyoruz.
-                        # as.character(corpus[[1]])
+                        # as.character(corpus[[1001]])
                         corpus = tm_map(corpus, stemDocument) # kelimenin root haline gidiyor (loved --> love)
-                        # as.character(corpus[[3]])
+                        # as.character(corpus[[1001]])
                         corpus = tm_map(corpus, stripWhitespace) # corpustaki düzeltmeler nedeniyle oluşan extra spaceleri kaldırıyoruz.
                         
                         dtm = DocumentTermMatrix(corpus)
@@ -153,6 +190,7 @@ server <- function(input, output) {
                         lbls <- paste(labels,piepercent)
                         lbls <- paste(lbls, "%", seq="")
                         pie3D(slice, labels = lbls, col= rainbow(length(labels)), main="Sentiment Analysis with Suppor Vector Machine (SVM)")
+                        
                 
                         
                 }
